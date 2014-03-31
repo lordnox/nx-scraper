@@ -1,0 +1,30 @@
+{
+  "server": {
+    "devPort": 9999
+  },
+  "bowerpath": "bower_components",
+  "appbase": "app",
+  "apppath": "app",
+  "assetspath": "scripts",
+  "testpath": "app/tests/{**/*,*}.js",
+  "templatesPath": "test/templates",
+  "files": {
+
+    "test": {
+      "lib": [
+        "node_modules/chai/chai.js",
+        "test/lib/chai-should.js",
+        "test/lib/chai-expect.js"
+      ],
+      "post": [
+        "test/templates/templates.js"
+      ],
+      "coverage": [
+        "app/{**,*}/*.js",
+        "!**/test/**"
+      ]
+    },
+
+    "app": "./app/app.coffee"
+  }
+}

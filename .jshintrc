@@ -1,0 +1,24 @@
+{
+  "undef": true,
+  "unused": true,
+  "laxcomma": true,
+  "laxbreak": true,
+  "strict": false,
+  "expr": true,
+  "globals": {
+    "require": false,
+    "global": false,
+    "module": false,
+    "process": false,
+    "beforeEach": false,
+    "inject": false,
+    "should": false,
+    "xdescribe": false,
+    "ddescribe": false,
+    "describe": false,
+    "xit": false,
+    "iit": false,
+    "it": false,
+    "unit": false
+  }
+}
