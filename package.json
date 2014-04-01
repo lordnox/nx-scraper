@@ -28,7 +28,8 @@
     "coffee-script": "^1.7.1",
     "request": "^2.34.0",
     "q": "^1.0.1",
-    "async": "^0.6.2"
+    "async": "^0.6.2",
+    "debug": "^0.8.0"
   },
   "devDependencies": {
     "matchdep": "0.3.0",
