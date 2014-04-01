@@ -1,6 +1,7 @@
 
 request = require 'request'
 crypto  = require 'crypto'
+log     = require('debug') 'nx-scraper::scraper'
 
 {helpers}       = require 'coffee-script'
 {EventEmitter}  = require 'events'
@@ -31,7 +32,7 @@ class Scraper extends EventEmitter
       @emit 'scraped',
         data: data
         hash: hash
-
+    log "scraping " + @url
     request @url, (err, res, body) =>
       return fn err if err
       return fn null, body if not @options.hash

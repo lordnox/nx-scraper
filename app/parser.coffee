@@ -6,13 +6,6 @@ async   = require 'async'
 
 log     = require('debug') 'nx-scraper::parser'
 
-###
-
-
-  'selector': name
-
-###
-
 Parser =
   context : (html) -> cheerio.load(html)
   text    : ($, selector, single)   ->
@@ -36,8 +29,8 @@ Parser =
     # single-obj
     return Parser.singleObj $, selection, obj.rules if obj.single
 
-    result = []
     # multible-obj
+    result = []
     selection.each (i, element) ->
       res = Parser.singleObj $, $(@), obj.rules
       result.push res if res
@@ -49,8 +42,6 @@ Parser =
     return Parser.string $, selector: rule, single: true if typeof rule is 'string'
     return Parser.obj $, rule if rule.hasOwnProperty "rules"
     Parser.string $, rule
-
-
 
 parser = (html, rule) ->
   $ = Parser.context html

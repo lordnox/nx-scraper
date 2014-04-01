@@ -41,6 +41,5 @@
     "nock": "^0.27.3"
   },
   "bundleDependencies": [],
-  "private": true,
-  "main": "app/scraper.coffee"
+  "main": "app/index.coffee"
 }
