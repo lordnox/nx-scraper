@@ -24,14 +24,14 @@ Parser =
     results = $.find selector
     return false if not results.length
     return results.eq(0).text() or false if single
-    if list
-      result = (Parser.textTree(results[index].children) for index in [0..results.length - 1])
-      # flatten the tree
-      result = helpers.flatten result
+
+    result = helpers.flatten if list
+      (Parser.textTree(results[index].children) for index in [0..results.length - 1])
     else
-      result = (results.eq(index).text() or false for index in [0..results.length - 1])
-      # trim non-strings
-    result.filter((leaf) -> typeof leaf is 'string')
+      (results.eq(index).text() or false for index in [0..results.length - 1])
+
+    # trim non-strings
+    leaf for leaf in result when typeof leaf is 'string'
 
   string  : ($, {selector, single, list}) ->
     text = Parser.text $, selector, single, list
@@ -42,6 +42,7 @@ Parser =
     found   = false
     result  = {}
     needs   = Object.keys rules if needs and needs is true
+
     Object.keys(rules).forEach (key) ->
       res = Parser.parse $, rules[key]
       return if res is false
@@ -66,6 +67,7 @@ Parser =
       return false
 
     result
+
   obj     : ($, obj)  ->
     log "object"
     selection = $.find obj.selector
