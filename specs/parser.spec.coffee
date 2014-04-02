@@ -226,13 +226,147 @@ describe "Parser", ->
           surname: 'SURNAME'
           lastname: 'LASTNAME'
 
+  describe "object property joining", ->
+    fix = null
+
+    beforeEach ->
+      fix =
+        html: "<span><div class='name'><b>A</b></div><div class='name'><i>B</i></span>"
+
+    afterEach ->
+      res = parser fix.html, fix.rules
+      res.should.be.eql fix.res
+
+    it "should a object with an b property and an object with an i property", ->
+      fix.rules =
+        selector: '.name'
+        rules:
+          b: 'b'
+          i: 'i'
+      fix.res = [
+        b: 'A'
+      ,
+        i: 'B'
+      ]
+
+    it "should join those properties together as a base value", ->
+      fix.rules =
+        selector: '.name'
+        join: ['b', 'i']
+        rules:
+          b: 'b'
+          i: 'i'
+      fix.res = [
+        'A'
+      ,
+        'B'
+      ]
+
+    it "should join those properties together when join is set to true", ->
+      fix.rules =
+        selector: '.name'
+        join: true
+        rules:
+          b: 'b'
+          i: 'i'
+      fix.res = [
+        'A'
+      ,
+        'B'
+      ]
+
+  describe.only "needing properties", ->
+    fix = null
+
+    beforeEach ->
+      fix =
+        html  : "<span><div><b></b></div><div><b>B</b></div><div><i>I</i></div><div><b>B</b><i>I</i></div></span>"
+
+    it "should find 3 elements", ->
+      # removes the first empty elements
+      fix.rules = selector: "div"
+      fix.res   = ["B", "I", "BI"]
+      fix.res.should.be.eql parser fix.html, fix.rules
+
+    it "should find 4 elements", ->
+      # removes the first
+      # splits the last
+      fix.rules = ["div"]
+      fix.res   = ["B", "I", "B", "I"]
+      fix.res.should.be.eql parser fix.html, fix.rules
+
+    it "should find 2 elements", ->
+      # finds only two b-tags, leaves all other objects empty
+      fix.rules =
+        selector: "div"
+        rules:
+          b: "b"
+      fix.res   = [
+        b: "B"
+      ,
+        b: "B"
+      ]
+      fix.res.should.be.eql parser fix.html, fix.rules
+
+    it "should find 3 elements", ->
+      # finds all, except the first one
+      fix.rules =
+        selector: "div"
+        rules:
+          b: "b"
+          i: "i"
+      fix.res   = [
+        b: "B"
+      ,
+        i: "I"
+      ,
+        b: "B"
+        i: "I"
+      ]
+      fix.res.should.be.eql parser fix.html, fix.rules
+
+    it "should find 3 elements", ->
+      # finds all, except the first one
+      # removes the "i"-only as it has no "b"-tag
+      fix.rules =
+        selector: "div"
+        needs: ["b"]
+        rules:
+          b: "b"
+          i: "i"
+      fix.res   = [
+        b: "B"
+      ,
+        b: "B"
+        i: "I"
+      ]
+      fix.res.should.be.eql parser fix.html, fix.rules
+
+    it "should find 1 elements", ->
+      # finds the b-tag and i-tag element
+      fix.rules =
+        selector: "div"
+        needs: true # ['b', 'i']
+        rules:
+          b: "b"
+          i: "i"
+      fix.res   = [
+        b: "B"
+        i: "I"
+      ]
+      fix.res.should.be.eql parser fix.html, fix.rules
 
 
-
-
-
-
-
+  describe "array selections", ->
+    it "should split the result into an array", ->
+      fix =
+        html  : "<div>A<br/>B</div>"
+        res   : [
+          "A",
+          "B"
+        ]
+        rules : ["div"]
+      fix.res.should.be.eql parser fix.html, fix.rules
 
 
 
