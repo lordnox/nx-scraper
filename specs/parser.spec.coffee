@@ -86,17 +86,17 @@ describe "Parser", ->
       fix =
         html  : "<div><div class='here'>Text A</div></div>"
         res   : [ { name: ["Text A"] } ]
-        rules : { selector: "div", rules: { name: { selector: ".here" } } }
+        rules : { selector: "div.here", rules: { name: { selector: "div" } } }
       fix.res.should.be.eql parser fix.html, fix.rules
 
-    it  "should return an user object", ->
+    it "should return an user object", ->
       fix =
         html  : "<div class='user'><div class='surname'>Martin</div> ... <div class='lastname'>Cheese</div></div>"
         res   : [ { surname: 'Martin', lastname: 'Cheese' } ]
         rules : { selector: ".user", rules: { surname: '.surname', lastname: '.lastname' } }
       fix.res.should.be.eql parser fix.html, fix.rules
 
-    it  "should return three users", ->
+    it "should return three users", ->
       fix =
         html  : "<ul><li><div>u1.surname</div><div>u1.lastname</div></li><li><div>u2.surname</div><div>u2.lastname</div></li><li><div>u3.surname</div><div>u3.lastname</div></li></ul>"
         res   : [
@@ -112,7 +112,7 @@ describe "Parser", ->
         rules : { selector: "li", rules: { surname: 'div:nth-child(1)', lastname: 'div:nth-last-child(1)' } }
       fix.res.should.be.eql parser fix.html, fix.rules
 
-    it  "should only return the first user", ->
+    it "should only return the first user", ->
       fix =
         html  : "<ul><li><div>u1.surname</div><div>u1.lastname</div></li><li><div>u2.surname</div><div>u2.lastname</div></li><li><div>u3.surname</div><div>u3.lastname</div></li></ul>"
         res   :
@@ -121,7 +121,7 @@ describe "Parser", ->
         rules : { selector: "li", single: true, rules: { surname: 'div:nth-child(1)', lastname: 'div:nth-last-child(1)' } }
       fix.res.should.be.eql parser fix.html, fix.rules
 
-    it  "should only return the second user", ->
+    it "should only return the second user", ->
       fix =
         html  : "<ul><li><div>u1.surname</div><div>u1.lastname</div></li><li><div>u2.surname</div><div>u2.lastname</div></li><li><div>u3.surname</div><div>u3.lastname</div></li></ul>"
         res   :
@@ -130,7 +130,101 @@ describe "Parser", ->
         rules : { selector: "li:nth-child(2)", single: true, rules: { surname: 'div:nth-child(1)', lastname: 'div:nth-last-child(1)' } }
       fix.res.should.be.eql parser fix.html, fix.rules
 
+  describe "chaining", ->
+    fix = null
 
+    beforeEach ->
+      fix =
+        html: "<div class='user'><div class='name'><div class='surname'>SURNAME</div><div class='lastname'>LASTNAME</div></div></div>"
+
+    afterEach ->
+      res = parser fix.html, fix.rules
+      res.should.be.eql fix.res
+
+    it "should find the 3rd-depth div", ->
+      fix.rules = { selector: "div>div>div" }
+      fix.res   = [
+        "SURNAME"
+        "LASTNAME"
+      ]
+
+    it "should find the surname via class", ->
+      fix.rules = { selector: ".surname" }
+      fix.res   = [
+        "SURNAME"
+      ]
+
+    it "should find the surname via class and shorthand", ->
+      fix.rules = ".surname"
+      fix.res   = "SURNAME"
+
+    it "should find the user with a surname property", ->
+      fix.rules =
+        selector: '.user'
+        rules:
+          surname: '.surname'
+      fix.res = [
+        surname: 'SURNAME'
+      ]
+
+    it "should find the name with surname and lastname property", ->
+      fix.rules =
+        selector: '.name'
+        rules:
+          surname: '.surname'
+          lastname: '.lastname'
+      fix.res = [
+        surname: 'SURNAME'
+        lastname: 'LASTNAME'
+      ]
+
+    it "should find users with names", ->
+      fix.rules =
+        selector: '.user'
+        rules:
+          name:
+            selector: '.name'
+            rules:
+              surname: '.surname'
+              lastname: '.lastname'
+      fix.res = [
+        name: [
+          surname: 'SURNAME'
+          lastname: 'LASTNAME'
+        ]
+      ]
+
+    it "should find users with a name", ->
+      fix.rules =
+        selector: '.user'
+        rules:
+          name:
+            selector: '.name'
+            single: true
+            rules:
+              surname: '.surname'
+              lastname: '.lastname'
+      fix.res = [
+        name:
+          surname: 'SURNAME'
+          lastname: 'LASTNAME'
+      ]
+
+    it "should find a user with a name", ->
+      fix.rules =
+        selector: '.user'
+        single: true
+        rules:
+          name:
+            selector: '.name'
+            single: true
+            rules:
+              surname: '.surname'
+              lastname: '.lastname'
+      fix.res =
+        name:
+          surname: 'SURNAME'
+          lastname: 'LASTNAME'
 
 
 
