@@ -1,6 +1,5 @@
 
 cheerio   = require 'cheerio'
-crypto    = require 'crypto'
 Q         = require 'q'
 async     = require 'async'
 log       = require('debug') 'nx-scraper::parser'
